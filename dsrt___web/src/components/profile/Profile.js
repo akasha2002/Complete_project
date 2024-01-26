@@ -259,7 +259,7 @@ const Profile = () => {
             <div className="col-lg-4">
               <div className="card mb-4">
                 <div className="card-body text-center">
-                  <img src="https://i.postimg.cc/9QBKrpzH/Akash-Profile.jpg" alt="avatar"
+                  <img src="https://i.postimg.cc/9QBKrpzH/Akash-Profile.jpg"alt="avatar"
                     className="rounded-circle img-fluid" style={{ width: '150px' }} />
                   <div className="my-3">{username ? <h2>Welcome, {userData?.student_name}!</h2> : <p>No username available</p>}</div>
                   {/* <h5 className="my-3"></h5> */}
