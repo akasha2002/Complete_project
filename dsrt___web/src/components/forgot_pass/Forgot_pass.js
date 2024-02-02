@@ -129,7 +129,7 @@ const ForgotPassword = () => {
 
   const handleChangePasswordRequest = async () => {
     try {
-      console.log("aaaaa")
+      // console.log("aaaaa")
       const response = await axios.post('http://localhost:3001/api/request_password_change', { email });
       // console.log(response+response+response)
       setMessage(response.data.message);

@@ -359,7 +359,7 @@ const nodemailer = require('nodemailer');
 
 const app = express();
 // y
-const port = 3001;
+const port = 3002;
 const secretKey = 'your-secret-key'; // Change this to a strong and unique secret key
 
 const dbConfig = {
@@ -378,7 +378,7 @@ app.use(bodyParser.json());
 // ... (rest of your code)
 //(forgot_start)
 const generateVerificationToken = () => {
-  console.log("aa")
+//  console.log("aa")
   return crypto.randomBytes(20).toString('hex'); // Generate a random string
 };
 
@@ -410,14 +410,13 @@ const sendVerificationEmail = async (email, verificationToken) => {
 // Endpoint for initiating password change and email verification
 app.post('/api/request_password_change', async (req, res) => {
   const { email } = req.body;
-//  console.log(email)
+console.log(email)
 
   try {
     // Check if the user exists in the database
-    const [userRows] = await pool.query('SELECT * FROM login WHERE email = ?', [email]);
-//    console.log(email)
-
-    if (userRows.length !== 1) {
+    const [userRows] = await pool.query('CALL password_verification( ? )',[email]);
+//    console.log("hh")
+    if (userRows[0].length !== 1) {
       return res.status(404).json({ error: 'User not found' });
     }
 
@@ -572,7 +571,7 @@ if (rows) {
        // Successful login
        console.log(rows[0].type)
        res.json({ success: true,image_link:rows[0].image_link,address_student_state:rows[0].address_student_state,address_student_district:rows[0].address_student_district,address_student_street:rows[0].address_student_street,address_student_door_no:rows[0].address_student_door_no,student_email:rows[0].student_email ,Student_standard:rows[0].Student_standard ,student_name:rows[0].student_name,student_mobile_no: rows[0].student_mobile_no });
-
+npm
      } else {
        // Failed login
        res.json({ success: false });
