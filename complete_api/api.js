@@ -359,7 +359,7 @@ const nodemailer = require('nodemailer');
 
 const app = express();
 // y
-const port = 3002;
+const port = 3001;
 const secretKey = 'your-secret-key'; // Change this to a strong and unique secret key
 
 const dbConfig = {
@@ -399,7 +399,7 @@ const sendVerificationEmail = async (email, verificationToken) => {
     to: email,
     subject: 'Email Verification',
     text: `You are receiving this email to verify your email address.\n\n`
-      + `Please click on the following link to verify your email and change your password:\n\n`
+      + `Your One Time Password is valid for 5 minutes\n\n`
       + `Please enter this One Time Password=${verificationToken}\n\n`
       + `If you did not request this, please ignore this email.\n`
   };
@@ -415,7 +415,8 @@ console.log(email)
   try {
     // Check if the user exists in the database
     const [userRows] = await pool.query('CALL password_verification( ? )',[email]);
-//    console.log("hh")
+    const Id = userRows[0][0].student_id;
+    // console.log(Id);
     if (userRows[0].length !== 1) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -425,7 +426,7 @@ console.log(email)
     const expiresAt = new Date(Date.now() + 24 * 3600 * 1000); // Token expires in 24 hours
 
     // Store the verification token in the database
-    await pool.query('INSERT INTO password_reset_verification (email, token, expires_at) VALUES (?, ?, ?)', [email, verificationToken, expiresAt]);
+    await pool.query('INSERT INTO password_reset_verification (email, token, expires_at,id) VALUES (?, ?, ?, ?)', [email, verificationToken, expiresAt,Id]);
 
     // Send verification email
     await sendVerificationEmail(email, verificationToken);
@@ -445,13 +446,15 @@ app.post('/api/verify_email_and_change_password', async (req, res) => {
   try {
     // Verify the verification token
     const [verificationRows] = await pool.query('SELECT * FROM password_reset_verification WHERE email = ? AND token = ? AND expires_at > NOW()', [email, verificationToken]);
-
+    console.log(verificationRows)
+    const id = verificationRows[0].id;
+    console.log(id);
     if (verificationRows.length !== 1) {
       return res.status(401).json({ error: 'Invalid verification token or token expired' });
     }
 
     // Update the user's password in the database
-    await pool.query('UPDATE login SET password = ? WHERE email = ?', [newPassword, email]);
+    await pool.query('UPDATE login SET password = ? WHERE user_id = ?', [newPassword, id]);
 
     // Delete the verification token from the database
     await pool.query('DELETE FROM password_reset_verification WHERE email = ?', [email]);
@@ -570,8 +573,7 @@ if (rows) {
    if (rows) {
        // Successful login
        console.log(rows[0].type)
-       res.json({ success: true,image_link:rows[0].image_link,address_student_state:rows[0].address_student_state,address_student_district:rows[0].address_student_district,address_student_street:rows[0].address_student_street,address_student_door_no:rows[0].address_student_door_no,student_email:rows[0].student_email ,Student_standard:rows[0].Student_standard ,student_name:rows[0].student_name,student_mobile_no: rows[0].student_mobile_no });
-npm
+       res.json({ success: true,image_link:rows[0].image_link,address_student_state:rows[0].address_student_state,address_student_district:rows[0].address_student_district,address_student_street:rows[0].address_student_street,address_student_door_no:rows[0].address_student_door_no,email:rows[0].email ,Student_standard:rows[0].Student_standard ,student_name:rows[0].student_name,student_mobile_no: rows[0].student_mobile_no });
      } else {
        // Failed login
        res.json({ success: false });
