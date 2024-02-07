@@ -1,14 +1,14 @@
 // import React, { useState } from 'react';
 // import { Link, useNavigate } from 'react-router-dom';
-
-
+// import { useUser } from '../Userdetails';
 
 // const Login = () => {
 //   const [username, setUsername] = useState('');
 //   const [password, setPassword] = useState('');
-//   const [loginError, setLoginError] = useState(false);
-  
+//   const [loginError, setLoginError] = useState('');
 
+//   // Use the useUser hook to get access to context values
+//   const { setAndStoreUserName, setAndStoreUserType } = useUser();
 //   const navigate = useNavigate();
 
 //   const handleLogin = async (e) => {
@@ -26,60 +26,39 @@
 //         }),
 //       });
 
-//       // if (response.ok) {
-//       //   // Navigate to the dashboard after successful login
-//       //   navigate(`/Dashboard`, { state: username });
-//       // } 
-//   //     else {
-//   //       // Set state to indicate login error
-//   //       setLoginError(true);
-//   //     }
-//   //   } catch (error) {
-//   //     console.error('Error during login:', error);
-//   //   }
-//   // };
+//       if (response.ok) {
+//         const result = await response.json();
 
-//   if (response.ok) {
-//     const result = await response.json();
-//     console.log(result)    
+//         if (result.success) {
+//           const type = result.userType;
+//           const name = result.userName;
+//           setAndStoreUserName(name);
+//           setAndStoreUserType(type);
 
-//     if (result.success) {
-
-//       // Assuming the API returns a user type
-//       const type = result.userType;
-//       console.log(type)  
-//       // setIsLoggedIn(true);
-      
-
-//       // Navigate based on the user type
-//       switch (type) {
-//         case 's':   
-//           // console.log("vmvb")
-//           navigate(`/Dashboard`,{ state: username });
-//           break;
-//         case 'a':
-//           navigate(`/Staff_Dashboard`, { state: username });
-//           break;
-//         // Add more cases for different user types as needed
-
-//         default:
-//           // Handle unknown user type
-//           console.error('Unknown user type:', type);
-//           break;
+//           switch (type) {
+//             case 's':
+//               navigate(`/Details/Student_Dashboard`, { state: { username } });
+//               break;
+//             case 't':
+//               navigate(`/Details/Staff_Dashboard`);
+//               // navigate(`/Details/Student_Dashboard`, { state: { username } });
+//               break;
+//             default:
+//               console.error('Unknown user type:', type);
+//               break;
+//           }
+//         } else {
+//           setLoginError('Invalid username or password');
+//         }
+//       } else {
+//         console.error('Login failed:', response.statusText);
+//         setLoginError('Login failed');
 //       }
-//     } else {
-//       // Set state to indicate login error
-//       setLoginError(true);
+//     } catch (error) {
+//       console.error('Error during login:', error);
+//       setLoginError('Error during login');
 //     }
-//   } else {
-//     // Handle non-OK responses (e.g., server error)
-//     console.error('Login failed:', response.statusText);
-//   }
-// } catch (error) {
-//   console.error('Error during login:', error);
-// }
-// };
-
+//   };
 
 //   return (
 //     <>
@@ -134,16 +113,18 @@
 // };
 
 // export default Login;
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-
-
+import { useUser } from '../Userdetails';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [loginError, setLoginError] = useState(false);
+  const [loginError, setLoginError] = useState('');
 
+  // Use the useUser hook to get access to context values
+  const { setAndStoreUserName, setAndStoreUserType } = useUser();
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -161,58 +142,38 @@ const Login = () => {
         }),
       });
 
-      // if (response.ok) {
-      //   // Navigate to the dashboard after successful login
-      //   navigate(/Dashboard, { state: username });
-      // } 
-  //     else {
-  //       // Set state to indicate login error
-  //       setLoginError(true);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error during login:', error);
-  //   }
-  // };
+      if (response.ok) {
+        const result = await response.json();
 
-  if (response.ok) {
-    const result = await response.json();
-    console.log(result)    
+        if (result.success) {
+          const type = result.userType;
+          const name = result.userName;
+          setAndStoreUserName(name);
+          setAndStoreUserType(type);
 
-    if (result.success) {
-
-      // Assuming the API returns a user type
-      const type = result.userType;
-      console.log(type)  
-
-      // Navigate based on the user type
-      switch (type) {
-        case 's':   
-          // console.log("vmvb")
-          navigate(`/Dashboard`,{ state: username });
-          break;
-        case 'a':
-          navigate(`/Staff_Dashboard`, { state: username });
-          break;
-        // Add more cases for different user types as needed
-
-        default:
-          // Handle unknown user type
-          console.error('Unknown user type:', type);
-          break;
+          switch (type) {
+            case 's':
+              navigate('/student/Student_Dashboard', { state: { username } });
+              break;
+            case 't':
+              navigate('/Staff/Staff_Dashboard');
+              break;
+            default:
+              console.error('Unknown user type:', type);
+              break;
+          }
+        } else {
+          setLoginError('Invalid username or password');
+        }
+      } else {
+        console.error('Login failed:', response.statusText);
+        setLoginError('Login failed');
       }
-    } else {
-      // Set state to indicate login error
-      setLoginError(true);
+    } catch (error) {
+      console.error('Error during login:', error);
+      setLoginError('Error during login');
     }
-  } else {
-    // Handle non-OK responses (e.g., server error)
-    console.error('Login failed:', response.statusText);
-  }
-} catch (error) {
-  console.error('Error during login:', error);
-}
-};
-
+  };
 
   return (
     <>

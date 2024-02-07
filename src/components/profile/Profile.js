@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useUserDetails } from '../Userdetails';
+
 const Profile = () => {
   const { state } = useLocation();
-  const { userType, userName } = useUserDetails();
-  console.log("profile username: ",userName)
-  // const username = state ? state.username : null;
+  const username = state ? state.username : null;
   // console.log(username)
 
   const [userData, setuserData] = useState(null);
@@ -18,7 +16,7 @@ const Profile = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ username: userName }),
+          body: JSON.stringify({ username: state.username }),
         });
 
         if (!response.ok) {
@@ -32,10 +30,10 @@ const Profile = () => {
       }
     };
 
-    if (userName) {
+    if (state && state.username) {
       fetchUserProfile();
     }
-  }, [userName]);
+  }, [state]);
 
   return (
     <>
@@ -47,10 +45,10 @@ const Profile = () => {
                 <div className="card-body text-center">
                   <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar"
                     className="rounded-circle img-fluid" style={{ width: '150px' }} />
-                  <div className="my-3">{userName ? <h2>Welcome, {userData?.student_name}!</h2> : <p>No username available</p>}</div>
+                  <div className="my-3">{username ? <h2>Welcome, {userData?.student_name}!</h2> : <p>No username available</p>}</div>
                   {/* <h5 className="my-3"></h5> */}
                   <p className="text-muted mb-1">{userData?.Student_standard}</p>
-                  <p className="text-muted mb-4">{userData?.email}</p>
+                  <p className="text-muted mb-4">{userData?.student_email}</p>
                   <div className="d-flex justify-content-center mb-2">
                     <button type="button" className="btn btn-primary">Follow</button>
                     <button type="button" className="btn btn-outline-primary ms-1">Message</button>
@@ -101,7 +99,7 @@ const Profile = () => {
                       <p className="mb-0">Email</p>
                     </div>
                     <div className="col-sm-9">
-                      <p className="text-muted mb-0">{userData?.email}</p>
+                      <p className="text-muted mb-0">{userData?.student_email}</p>
                     </div>
                   </div>
                   <hr />

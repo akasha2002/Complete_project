@@ -363,11 +363,23 @@ const port = 3001;
 const secretKey = 'your-secret-key'; // Change this to a strong and unique secret key
 
 const dbConfig = {
+    // port:3306
+    // user:  'sqluser', // sql user
+    // password:  'password', //sql user password
+    // server:  '127.0.0.1', // if it does not work try- localhost
+    // database:  'dsrt',
+    // options: {
+    //   trustedconnection:  true,
+    //   enableArithAbort:  true,
+    //   instancename:  'SQLEXPRESS'  // SQL Server instance name
+    // },
     host: '127.0.0.1',
     user: 'sqluser',
     password: 'password',
     database: 'dsrt',
-    // port:3306
+    // 'options' => [PDO::ATTR_EMULATE_PREPARES => true]
+    
+
   };
 
 const pool = mysql.createPool(dbConfig);
@@ -526,8 +538,8 @@ app.post('/login', async (req, res) => {
 //    res.json({ token });
 if (rows) {
     // Successful login
-    console.log(rows[0].type)
-    res.json({ success: true, userType: rows[0].type });
+    // console.log(rows[0].type)
+    res.json({ success: true, userType: rows[0].type,userName:rows[0].user_id });
 
   } else {
     // Failed login
@@ -543,7 +555,7 @@ if (rows) {
    app.post('/profile/student', async (req, res) => {
 //     console.log("hii")
      const { username } = req.body;
-//     console.log(username)
+     console.log("username in api :",username)
 
      try {
        // Get a connection from the pool
@@ -551,10 +563,10 @@ if (rows) {
 
        // Query the database to find a user with the provided username and password
 //       const [rows] = await connection.execute('SELECT * FROM students_detail WHERE student_id = ? ', [username]);
-       console.log(username)
+      //  console.log(username)
        const [rows] = await connection.execute('SELECT * FROM students_detail where student_id = ?',[username]);
 
-       console.log(rows);
+      //  console.log(rows);
 
        // Release the connection back to the pool
        connection.release();
@@ -572,7 +584,7 @@ if (rows) {
    //    res.json({ token });
    if (rows) {
        // Successful login
-       console.log(rows[0].type)
+      //  console.log(rows[0].type)
        res.json({ success: true,image_link:rows[0].image_link,address_student_state:rows[0].address_student_state,address_student_district:rows[0].address_student_district,address_student_street:rows[0].address_student_street,address_student_door_no:rows[0].address_student_door_no,email:rows[0].email ,Student_standard:rows[0].Student_standard ,student_name:rows[0].student_name,student_mobile_no: rows[0].student_mobile_no });
      } else {
        // Failed login
@@ -589,5 +601,212 @@ if (rows) {
 //   console.log(`Authentication API is running on http://localhost:${port}`);
 // });
 // var  port = process.env.PORT || 8090;
+
+
+app.post('/staff_details', async (req, res) => {
+  // console.log("hii")
+  const { username } = req.body;
+
+  try {
+    // Get a connection from the pool
+    const connection = await pool.getConnection();
+
+    // Query the database to find a user with the provided username and password
+    const [rows_1] = await connection.execute('SELECT  staff_id,staff_name FROM staff_details WHERE  staff_id= ?', [username]);
+
+    // console.log(rows_1);
+
+    // Release the connection back to the pool
+    connection.release();
+
+    if (rows_1.length === 0) {
+      return res.status(401).json({ message: 'Invalid Staff' });
+    }
+
+
+    // Create a JWT token
+//    const token = jwt.sign({ user: { id: rows[0].id, username: rows[0].username } }, secretKey, {
+//      expiresIn: '1h', // Token expires in 1 hour (adjust as needed)
+//    });
+//    // console.log(token)
+//    res.json({ token });
+if (rows_1) {
+    // Successful login
+    // console.log(rows[0].type)
+    res.json({ success: true, user: rows_1[0] });
+
+  } else {
+    // Failed login
+    res.json({ success: false });
+  }
+
+  } catch (error) {
+    console.error('Error In Api:', error);
+       res.status(500).json({ message: 'Internal Server Error' });
+     }
+   });
+
+   app.post('/staff_details/students', async (req, res) => {
+    // console.log("hii")
+    const { username } = req.body;
+    console.log(username)
+    // console.log("username from /staff_details/students",username.username)
+  
+    try {
+      // Get a connection from the pool
+      const connection = await pool.getConnection();
+  
+      // Query the database to find a user with the provided username and password
+      const [rows_2] = await connection.execute('SELECT  student_id,Student_standard,student_name,category FROM students_detail WHERE  staff_id= ?', [username]);
+  
+      // console.log(rows_2);
+  
+      // Release the connection back to the pool
+      connection.release();
+  
+      if (rows_2.length === 0) {
+        return res.status(401).json({ message: 'Invalid Staff' });
+      }
+  
+  
+      // Create a JWT token
+  //    const token = jwt.sign({ user: { id: rows[0].id, username: rows[0].username } }, secretKey, {
+  //      expiresIn: '1h', // Token expires in 1 hour (adjust as needed)
+  //    });
+  //    // console.log(token)
+  //    res.json({ token });
+  if (rows_2) {
+      // Successful login
+      // console.log(rows[0].type)
+      res.json({ success: true, user: rows_2 });
+  
+    } else {
+      // Failed login
+      res.json({ success: false });
+    }
+  
+    } catch (error) {
+      console.error('Error In 2nd_Api:', error);
+         res.status(500).json({ message: 'Internal Server Error in 2nd_Api ' });
+       }
+     });
+     app.post('/work_assign/teacher', async (req, res) => {
+      // console.log("hii")
+      const { studentType, title, description, selectedClass ,teacher_id } = req.body;
+      console.log('Assignment submitted:');
+      console.log('Student Type:', studentType);
+      console.log('Title:', title);
+      console.log('Description:', description);
+      console.log('Selected Class:', selectedClass);
+      console.log('Selected Class:', teacher_id);
+      
+      
+
+      // console.log(username)
+      // console.log("username from /staff_details/students",username.username)
+    
+      try { 
+        // Get a connection from the pool
+        const connection = await pool.getConnection();
+    
+        // Query the database to find a user with the provided username and password
+//         const [rows_3] = await connection.execute(`
+//   INSERT INTO work_assignment (student_id, teacher_id, class, assignment_title, assignment_description, category)
+//   SELECT student_id, ?, ?, ?, ?, ?
+//   FROM students_detail
+//   WHERE staff_id = ? AND Student_standard = ?
+// `, [teacher_id, selectedClass, title, description,studentType]);
+
+ const [rows_3] = await connection.execute('CALL insert_assign(?, ?, ?, ?, ?)', [teacher_id, selectedClass, title, description, studentType]);
+
+
+    
+        console.log(rows_3);
+    
+        // Release the connection back to the pool
+        connection.release();
+    
+        if (rows_3.length === 0) {
+          return res.status(401).json({ message: 'Invalid Staff' });
+        }
+    
+    
+        // Create a JWT token
+    //    const token = jwt.sign({ user: { id: rows[0].id, username: rows[0].username } }, secretKey, {
+    //      expiresIn: '1h', // Token expires in 1 hour (adjust as needed)
+    //    });
+    //    // console.log(token)
+    //    res.json({ token });
+    if (rows_3) {
+        // Successful login
+        // console.log(rows[0].type)
+        // res.json({ success: true, user: rows_3 });
+        res.json({ success: true});
+    
+      } else {
+        // Failed login
+        res.json({ success: false });
+      }
+    
+      } catch (error) {
+        console.error('Error In 2nd_Api:', error);
+           res.status(500).json({ message: 'Internal Server Error in 2nd_Api ' });
+         }
+       });
+       app.post('/staff_dashboard/status', async (req, res) => {
+        // console.log("hii")
+        const {  teacher_id } = req.body;
+        console.log('Assignment submitted:');
+        // console.log('Student Id:', student_id);
+        console.log('Teacher_Id:', teacher_id);
+        
+        
+        
+  
+        // console.log(username)
+        // console.log("username from /staff_details/students",username.username)
+      
+        try { 
+          // Get a connection from the pool
+          const connection = await pool.getConnection();
+      
+         
+  
+   const [rows_4] = await connection.execute('SELECT  student_id,assignment_status FROM work_assignment WHERE teacher_id= ?',[teacher_id]);
+  
+  // const [rows_4] = await connection.execute('select * from login');
+      
+          console.log(rows_4);
+      
+          // Release the connection back to the pool
+          connection.release();
+      
+          if (rows_4.length === 0) {
+            return res.status(401).json({ message: 'Invalid Staff' });
+          }
+      
+      
+          // Create a JWT token
+      //    const token = jwt.sign({ user: { id: rows[0].id, username: rows[0].username } }, secretKey, {
+      //      expiresIn: '1h', // Token expires in 1 hour (adjust as needed)
+      //    });
+      //    // console.log(token)
+      //    res.json({ token });
+      if (rows_4) {
+          // Successful login
+          // console.log(rows[0].type)
+          // res.json({ success: true, user: rows_3 });
+          res.json({ success: true , users: rows_4});
+      
+        } else {
+          // Failed login
+          res.json({ success: false });
+        }
+      
+        } catch (error) {
+          console.error('Error In 2nd_Api:', error);
+             res.status(500).json({ message: 'Internal Server Error in 2nd_Api ' });
+           }
+         });
 app.listen(port);
 console.log('Order API is runnning at ' + port);
