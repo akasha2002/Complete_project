@@ -1,6 +1,10 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
+import 'animate.css';
+import Confetti from 'react-confetti'; // Import the Confetti component
 
 export default function Reward() {
+  const [showConfetti, setShowConfetti] = useState(false); // State to control confetti display
+
   // Placeholder data for reward details
   const rewardDetails = {
     totalPoints: 500,
@@ -14,9 +18,27 @@ export default function Reward() {
     // Add more reward items as needed
   ];
 
+  useEffect(() => {
+    // Apply celebratory effect when component mounts
+    const cardElement = document.querySelector('.card');
+    if (cardElement) {
+      // Add bounce-in animation
+      cardElement.classList.add('animate_animated', 'animate_bounceIn');
+
+      // Trigger confetti effect
+      setShowConfetti(true);
+
+      // Remove confetti effect after 5 seconds
+      const animationDuration = 5000; // 5 seconds
+      setTimeout(() => {
+        setShowConfetti(false);
+      }, animationDuration);
+    }
+  }, []);
+
   return (
     <>
-      <div className="container mt-2">
+      <div className="container-fluid mt-2 ">
         <div className="card p-5">
           <h2 className="mb-4">Rewards</h2>
 
@@ -49,6 +71,9 @@ export default function Reward() {
         </div>
 
         {/* Additional Content or Components can be added as needed */}
+
+        {/* Confetti Effect */}
+        {showConfetti && <Confetti />}
       </div>
     </>
   );

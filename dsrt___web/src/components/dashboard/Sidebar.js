@@ -136,15 +136,21 @@ library.add(fas);
 export default function Sidebar(props) {
     const { handleLogout } = useAuth();
     const { userType, userName } = useUserDetails();
-    console.log(userType)
+    // console.log(userType)
     return (
         <>
             <div className={`bg-white`} id="sidebar-wrapper">
-                <div className="sidebar-heading text-center py-4 primary-text fs-4 fw-bold text-uppercase border-bottom"><FontAwesomeIcon className="me-2" icon="school" />FX School</div>
+            <div className="sidebar-heading text-center py-4 primary-text fs-4 fw-bold text-uppercase border-bottom">
+  <img
+    src="https://www.fxschool.ac.in/cs-content/themes/fxcbse/assets/img/FX_LOGO.png"
+    alt="FX School Logo"
+    className="me-2"
+    style={{ width: '180px', height: '50px' }} // Adjust the width and height as needed
+  /></div>
                 <div className="list-group list-group-flush my-3">
                     {userType === 's' && (
                         <>
-                            <Link to="student/Student_Dashboard" onClick={() => { props.handleLinkClick('Student_Dashboard'); }} className={`list-group-item list-group-item-action bg-transparent second-text active`}>
+                            <Link to="student/Student_Dashboard" onClick={() => { props.handleLinkClick('Student_Dashboard'); }} className={`list-group-item list-group-item-action bg-transparent second-text fw-bold`}>
                                 <i className="fas fa-project-diagram me-2"></i>Student_Dashboard
                             </Link>
                             <Link to="student/Student_Assigned_work" onClick={() => { props.handleLinkClick('Assigned work'); }} className={`list-group-item list-group-item-action bg-transparent second-text fw-bold`}>
@@ -160,7 +166,7 @@ export default function Sidebar(props) {
                     )} 
                     {userType === 't' && (
                         <>
-                            <Link to="Staff/Staff_Dashboard" onClick={() => { props.handleLinkClick('Staff_Dashboard'); }} className={`list-group-item list-group-item-action bg-transparent second-text active`}>
+                            <Link to="Staff/Staff_Dashboard" onClick={() => { props.handleLinkClick('Staff_Dashboard'); }} className={`list-group-item list-group-item-action bg-transparent second-text fw-bold`}>
                                 <i className="fas fa-chalkboard-teacher me-2"></i>Staff_Dashboard
                             </Link>
                             <Link to="Staff/Staff_Assign_Work" onClick={() => { props.handleLinkClick('Assign_Work'); }} className={`list-group-item list-group-item-action bg-transparent second-text fw-bold`}>

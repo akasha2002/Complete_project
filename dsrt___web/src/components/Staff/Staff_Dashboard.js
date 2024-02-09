@@ -4,7 +4,7 @@ import { useUserDetails } from '../Userdetails';
 export default function Staff_Dashboard(props) {
     //  console.log(props)
      const { userType, userName } = useUserDetails();
-     console.log(userName)
+    //  console.log(userName)
     //  console.log("From sidebar:",userName)
     //  var Username = userName
      //const { state: Username } = useLocation(); 

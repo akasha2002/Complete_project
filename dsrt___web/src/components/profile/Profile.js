@@ -4,7 +4,7 @@ import { useUserDetails } from '../Userdetails';
 const Profile = () => {
   const { state } = useLocation();
   const { userType, userName } = useUserDetails();
-  console.log("profile username: ",userName)
+  // console.log("profile username: ",userName)
   // const username = state ? state.username : null;
   // console.log(username)
 
@@ -31,9 +31,47 @@ const Profile = () => {
         console.error('Error fetching user profile:', error.message);
       }
     };
+    const fetchUserProfile_2 = async () => {
+      // console.log("In wrapper teacher in profile",userName ,userType)
+      // var response = 0
+      try {
+        // if(userType === 's'){
+        const response = await fetch("http://localhost:3001/profile/staff", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username: userName }),
+        });
+      // }
+        // if(userType === 't'){
+        //   const response = await fetch("http://localhost:3001/profile/student", {
+        //   method: "POST",
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        //   body: JSON.stringify({ username: userName }),
+        // });
+        // }
 
-    if (userName) {
+        if (!response.ok) {
+          throw new Error("Failed to fetch user profile student");
+        }
+
+        const data = await response.json();
+            setuserData(data);
+        // setLoading(false);
+      } catch (error) {
+        console.error("Error fetching user profile student :", error.message);
+        // setLoading(false);
+      }
+    };
+
+    if (userType === 's') {
       fetchUserProfile();
+    }
+    if (userType === 't') {
+      fetchUserProfile_2();
     }
   }, [userName]);
 

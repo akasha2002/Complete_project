@@ -8,6 +8,7 @@ import Sidebar from "./Sidebar";
 import Logout from "./Logout";
 import Profile from "../profile/Profile";
 import Student_Dashboard from "../student/Student_Dashboard"
+import Assignment_submission from "../student/Assignment_submission";
 import Assigned_work from "../student/assigned_work"
 import Completed_work from "../student/completed_work"
 import Reward from "../student/reward"
@@ -51,7 +52,10 @@ useEffect(() => {
 
   useEffect(() => {
     const fetchUserProfile = async () => {
+      // console.log("In wrapper student",userName ,userType)
+      // var response = 0
       try {
+        // if(userType === 's'){
         const response = await fetch("http://localhost:3001/profile/student", {
           method: "POST",
           headers: {
@@ -59,22 +63,70 @@ useEffect(() => {
           },
           body: JSON.stringify({ username: userName }),
         });
+      // }
+        // if(userType === 't'){
+        //   const response = await fetch("http://localhost:3001/profile/student", {
+        //   method: "POST",
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        //   body: JSON.stringify({ username: userName }),
+        // });
+        // }
 
         if (!response.ok) {
-          throw new Error("Failed to fetch user profile");
+          throw new Error("Failed to fetch user profile student");
         }
 
         const data = await response.json();
         setUserData(data);
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching user profile:", error.message);
+        console.error("Error fetching user profile student :", error.message);
+        setLoading(false);
+      }
+    }; 
+    const fetchUserProfile_2 = async () => {
+      // console.log("In wrapper teacher",userName ,userType)
+      // var response = 0
+      try {
+        // if(userType === 's'){
+        const response = await fetch("http://localhost:3001/profile/staff", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username: userName }),
+        });
+      // }
+        // if(userType === 't'){
+        //   const response = await fetch("http://localhost:3001/profile/student", {
+        //   method: "POST",
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        //   body: JSON.stringify({ username: userName }),
+        // });
+        // }
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch user profile student");
+        }
+
+        const data = await response.json();
+        setUserData(data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching user profile student :", error.message);
         setLoading(false);
       }
     };
 
-    if (userName) {
+    if (userType === 's') {
       fetchUserProfile();
+    }
+    if (userType === 't') {
+      fetchUserProfile_2();
     }
   }, [userName]);
 
@@ -99,6 +151,7 @@ useEffect(() => {
             <Route path="student/Student_Dashboard" element={<Student_Dashboard />} />
             <Route path="student/Student_Completed_work" element={<Completed_work />} />
             <Route path="student/Student_Assigned_work" element={<Assigned_work />} />
+            <Route path="student/Assignment_submission" element={<Assignment_submission />} />
             <Route path="student/Student_Reward" element={<Reward />} />
             <Route path="Staff/Staff_Dashboard" element={<Staff_Dashboard userType={userType} userName={userName}/>} />
             <Route path="Staff/Staff_Assign_Work" element={<Staff_Assign_Work userType={userType} userName={userName}/>} />

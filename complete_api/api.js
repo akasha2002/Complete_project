@@ -356,6 +356,11 @@ const mysql = require('mysql2/promise');
 const cors = require('cors'); // Import the cors middleware
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
+// const pool = require('./pool'); 
 
 const app = express();
 // y
@@ -555,7 +560,7 @@ if (rows) {
    app.post('/profile/student', async (req, res) => {
 //     console.log("hii")
      const { username } = req.body;
-     console.log("username in api :",username)
+    console.log("username in api :",username)
 
      try {
        // Get a connection from the pool
@@ -596,6 +601,51 @@ if (rows) {
           res.status(500).json({ message: 'Internal Server Error' });
         }
       });
+
+      app.post('/profile/staff', async (req, res) => {
+        //     console.log("hii")
+             const { username } = req.body;
+            console.log("username in api_staff :",username)
+        
+             try {
+               // Get a connection from the pool
+               const connection = await pool.getConnection();
+        
+               // Query the database to find a user with the provided username and password
+        //       const [rows] = await connection.execute('SELECT * FROM students_detail WHERE student_id = ? ', [username]);
+              //  console.log(username)
+               const [rows_5] = await connection.execute('SELECT * FROM staff_details where staff_id = ?',[username]);
+        
+              //  console.log(rows);
+        
+               // Release the connection back to the pool
+               connection.release();
+        
+               if (rows_5.length === 0) {
+                 return res.status(401).json({ message: 'Invalid username or password' });
+               }
+        
+        
+               // Create a JWT token
+           //    const token = jwt.sign({ user: { id: rows[0].id, username: rows[0].username } }, secretKey, {
+           //      expiresIn: '1h', // Token expires in 1 hour (adjust as needed)
+           //    });
+           //    // console.log(token)
+           //    res.json({ token });
+           if (rows_5) {
+               // Successful login
+              //  console.log(rows[0].type)
+               res.json({ success: true,address_student_state:rows_5[0].staff_Address_state,address_student_district:rows_5[0].staff_Address_district,address_student_street:rows_5[0].staff_Address_street,address_student_door_no:rows_5[0].staff_Address_door_no,email:rows_5[0].email ,Student_standard:rows_5[0].designation ,student_name:rows_5[0].staff_name,student_mobile_no: rows_5[0].staff_mobile_no });
+             } else {
+               // Failed login
+               res.json({ success: false });
+             }
+        
+             } catch (error) {
+               console.error('Error during authentication:', error);
+                  res.status(500).json({ message: 'Internal Server Error in staff profile_api' });
+                }
+              });
 
 // app.listen(port, () => {
 //   console.log(`Authentication API is running on http://localhost:${port}`);
@@ -649,7 +699,7 @@ if (rows_1) {
    app.post('/staff_details/students', async (req, res) => {
     // console.log("hii")
     const { username } = req.body;
-    console.log(username)
+    // console.log(username)
     // console.log("username from /staff_details/students",username.username)
   
     try {
@@ -657,7 +707,7 @@ if (rows_1) {
       const connection = await pool.getConnection();
   
       // Query the database to find a user with the provided username and password
-      const [rows_2] = await connection.execute('SELECT  student_id,Student_standard,student_name,category FROM students_detail WHERE  staff_id= ?', [username]);
+      const [rows_2] = await connection.execute('SELECT  student_id,Student_standard,student_name,category FROM students_detail_staff WHERE  staff_id= ?', [username]);
   
       // console.log(rows_2);
   
@@ -690,20 +740,41 @@ if (rows_1) {
          res.status(500).json({ message: 'Internal Server Error in 2nd_Api ' });
        }
      });
-     app.post('/work_assign/teacher', async (req, res) => {
-      // console.log("hii")
-      const { studentType, title, description, selectedClass ,teacher_id } = req.body;
-      console.log('Assignment submitted:');
-      console.log('Student Type:', studentType);
-      console.log('Title:', title);
-      console.log('Description:', description);
-      console.log('Selected Class:', selectedClass);
-      console.log('Selected Class:', teacher_id);
+
+
+     // Multer configuration
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // Specify the destination directory to save uploaded files
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname)); // Set the file name
+  }
+});
+
+const upload = multer({ storage: storage });
+
+    //  app.post('/work_assign/teacher', async (req, res) => {
+    //   // console.log("hii")
+    //   const { studentType, title, description, selectedClass ,teacher_id ,dueDate} = req.body;
+    //   console.log('Assignment submitted:');
+    //   console.log('Student Type:', studentType);
+    //   console.log('Title:', title);
+    //   console.log('Description:', description);
+    //   console.log('Selected Class:', selectedClass);
+    //   console.log('teacher_id:', teacher_id);
+    //   console.log('Due date:', dueDate);
+      
       
       
 
-      // console.log(username)
-      // console.log("username from /staff_details/students",username.username)
+    //   // console.log(username)
+    //   // console.log("username from /staff_details/students",username.username)
+    app.post('/work_assign/teacher', upload.single('pdfFile'), async (req, res) => {
+      const { studentType, title, description, selectedClass, teacher_id, dueDate } = req.body;
+       const pdfFile = req.file; 
+      
+       const { filename, originalname, path } = req.file;  // Get the uploaded PDF file
     
       try { 
         // Get a connection from the pool
@@ -717,11 +788,12 @@ if (rows_1) {
 //   WHERE staff_id = ? AND Student_standard = ?
 // `, [teacher_id, selectedClass, title, description,studentType]);
 
- const [rows_3] = await connection.execute('CALL insert_assign(?, ?, ?, ?, ?)', [teacher_id, selectedClass, title, description, studentType]);
+      const { studentType, title, description, selectedClass, teacher_id, dueDate } = req.body;
+      const [rows_3] = await connection.execute('CALL insert_assign(?, ?, ?, ?, ?, ?,?)', [teacher_id, selectedClass, title, description, studentType , pdfFile.filename,dueDate]);
 
 
     
-        console.log(rows_3);
+        // console.log(rows_3);
     
         // Release the connection back to the pool
         connection.release();
@@ -756,9 +828,9 @@ if (rows_1) {
        app.post('/staff_dashboard/status', async (req, res) => {
         // console.log("hii")
         const {  teacher_id } = req.body;
-        console.log('Assignment submitted:');
-        // console.log('Student Id:', student_id);
-        console.log('Teacher_Id:', teacher_id);
+        // console.log('Assignment submitted:');
+        // // console.log('Student Id:', student_id);
+        // console.log('Teacher_Id:', teacher_id);
         
         
         
@@ -776,7 +848,7 @@ if (rows_1) {
   
   // const [rows_4] = await connection.execute('select * from login');
       
-          console.log(rows_4);
+          // console.log(rows_4);
       
           // Release the connection back to the pool
           connection.release();
@@ -808,5 +880,140 @@ if (rows_1) {
              res.status(500).json({ message: 'Internal Server Error in 2nd_Api ' });
            }
          });
+         app.use('/uploads', express.static('uploads'));
+         app.get('/get-pdf-filenames', (req, res) => {
+          console.log("api")
+          const uploadsDir = path.join(__dirname, 'uploads');
+          fs.readdir(uploadsDir, (err, files) => {
+            if (err) {
+              console.error('Error reading directory:', err);
+              res.status(500).json({ error: 'Internal Server Error' });
+              return;
+            }
+            // Filter PDF files
+            const pdfFiles = files.filter(file => file.endsWith('.pdf'));
+            res.json(pdfFiles);
+          });
+        });
+
+        app.get('/get-pdf/:filename', (req, res) => {
+          const filename = req.params.filename;
+          const filePath = path.join(__dirname, 'uploads', filename);
+          res.sendFile(filePath);
+        });
+
+         app.post('/student/student_dashboard', async (req, res) => {
+          // console.log("hii")
+          const {  student_id } = req.body;
+          // console.log('Assignment submitted:');
+          // // console.log('Student Id:', student_id);
+          // console.log('Teacher_Id:', teacher_id);
+          
+          
+          
+    
+          // console.log(username)
+          // console.log("username from /staff_details/students",username.username)
+        
+          try { 
+            // Get a connection from the pool
+            const connection = await pool.getConnection();
+        
+           
+    
+     const [rows_4] = await connection.execute('CALL student_dashboard(?)',[student_id]);
+    
+    // const [rows_4] = await connection.execute('select * from login');
+        
+            // console.log(rows_4);
+        
+            // Release the connection back to the pool
+            connection.release();
+        
+            if (rows_4.length === 0) {
+              return res.status(401).json({ message: 'Invalid Staff' });
+            }
+        
+        
+            // Create a JWT token
+        //    const token = jwt.sign({ user: { id: rows[0].id, username: rows[0].username } }, secretKey, {
+        //      expiresIn: '1h', // Token expires in 1 hour (adjust as needed)
+        //    });
+        //    // console.log(token)
+        //    res.json({ token });
+        if (rows_4) {
+            // Successful login
+            // console.log(rows[0].type)
+            // res.json({ success: true, user: rows_3 });
+            res.json({ success: true ,  rows_4});
+        
+          } else {
+            // Failed login
+            res.json({ success: false });
+          }
+        
+          } catch (error) {
+            console.error('Error In 2nd_Api:', error);
+               res.status(500).json({ message: 'Internal Server Error in 2nd_Api ' });
+             }
+           });
+
+
+           app.post('/student/assignment_submission', async (req, res) => {
+            // console.log("hii")
+            const {  assign_id } = req.body;
+            console.log("assign_id", assign_id)
+            // console.log('Assignment submitted:');
+            // // console.log('Student Id:', student_id);
+            // console.log('Teacher_Id:', teacher_id);
+            
+            
+            
+      
+            // console.log(username)
+            // console.log("username from /staff_details/students",username.username)
+          
+            try { 
+              // Get a connection from the pool
+              const connection = await pool.getConnection();
+          
+             
+      
+       const [rows_8] = await connection.execute('CALL student_assign_show(?)',[assign_id]);
+      
+      // const [rows_4] = await connection.execute('select * from login');
+          
+              // console.log(rows_8);
+          
+              // Release the connection back to the pool
+              connection.release();
+          
+              if (rows_8.length === 0) {
+                return res.status(401).json({ message: 'Invalid Staff' });
+              }
+          
+          
+              // Create a JWT token
+          //    const token = jwt.sign({ user: { id: rows[0].id, username: rows[0].username } }, secretKey, {
+          //      expiresIn: '1h', // Token expires in 1 hour (adjust as needed)
+          //    });
+          //    // console.log(token)
+          //    res.json({ token });
+          if (rows_8) {
+              // Successful login
+              // console.log(rows[0].type)
+              // res.json({ success: true, user: rows_3 });
+              res.json({ success: true ,  rows_8});
+          
+            } else {
+              // Failed login
+              res.json({ success: false });
+            }
+          
+            } catch (error) {
+              console.error('Error In 8th_Api:', error);
+                 res.status(500).json({ message: 'Internal Server Error in 2nd_Api ' });
+               }
+             });
 app.listen(port);
 console.log('Order API is runnning at ' + port);
