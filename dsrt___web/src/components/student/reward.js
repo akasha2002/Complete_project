@@ -1,80 +1,92 @@
-import React, { useEffect, useState } from 'react';
-import 'animate.css';
-import Confetti from 'react-confetti'; // Import the Confetti component
+import React, { useEffect, useState, useRef } from "react";
+import "animate.css/animate.min.css"; // Corrected import
+import Confetti from "react-confetti";
+import "./styles.css";
+import { useUserDetails } from "../Userdetails";
 
 export default function Reward() {
-  const [showConfetti, setShowConfetti] = useState(false); // State to control confetti display
+  const [showConfetti, setShowConfetti] = useState(false);
+  const cardRef = useRef(null);
+  const [totalPoints, setTotalPoints] = useState(null);
 
-  // Placeholder data for reward details
-  const rewardDetails = {
-    totalPoints: 500,
-    level: 'Gold',
-  };
+  const { userType, userName } = useUserDetails();
 
-  // Placeholder data for earned rewards
   const earnedRewards = [
-    { id: 1, name: 'Certificate of Achievement' },
-    { id: 2, name: 'Star Student Badge' },
-    // Add more reward items as needed
+    { id: 1, name: "Certificate of Achievement" },
+    { id: 2, name: "Star Student Badge" },
   ];
 
   useEffect(() => {
-    // Apply celebratory effect when component mounts
-    const cardElement = document.querySelector('.card');
+    if (userName) {
+      fetch("http://localhost:3001/student/rewards", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userName: userName,
+        }),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          if (data.success && data.rows_15.length > 0) {
+            setTotalPoints(data.rows_15[0].rewards);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching totalPoints:", error);
+        });
+    }
+  }, [userName]);
+
+  useEffect(() => {
+    const cardElement = cardRef.current;
     if (cardElement) {
-      // Add bounce-in animation
-      cardElement.classList.add('animate_animated', 'animate_bounceIn');
+      cardElement.classList.add("animated", "bounceIn");
 
-      // Trigger confetti effect
-      setShowConfetti(true);
-
-      // Remove confetti effect after 5 seconds
-      const animationDuration = 5000; // 5 seconds
+      const animationDuration = 1000;
       setTimeout(() => {
-        setShowConfetti(false);
+        cardElement.classList.remove("animated", "bounceIn");
+        setShowConfetti(true);
+        setTimeout(() => {
+          setShowConfetti(false);
+        }, 5000);
       }, animationDuration);
     }
   }, []);
 
   return (
-    <>
-      <div className="container-fluid mt-2 ">
-        <div className="card p-5">
-          <h2 className="mb-4">Rewards</h2>
-
-          {/* Display Reward Details */}
-          <div className="mb-4">
-            <h3>Total Points:</h3>
-            <p>{rewardDetails.totalPoints}</p>
-            <h3>Level:</h3>
-            <p>{rewardDetails.level}</p>
-          </div>
-
-          {/* List of Earned Rewards */}
-          <div className="mb-4">
-            <h3>Earned Rewards</h3>
-            <ul>
-              {earnedRewards.map((reward) => (
-                <li key={reward.id}>{reward.name}</li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Achievement Illustration (Replace with an actual image) */}
-          <div className="text-center">
+    <div className="container-fluid mt-4 reward-page">
+      <div className="card p-4" ref={cardRef}>
+        <h2 className="mb-4">Rewards</h2>
+        <div className="mb-4">
+          <h3>Total Points:</h3>
+          <p>{totalPoints !== null ? totalPoints : '0'}</p> {/* Display totalPoints or 'Loading...' */}
+        </div>
+        {/* <div className="mb-4">
+          <h3>Earned Rewards</h3>
+          <ul>
+            {earnedRewards.map((reward) => (
+              <li key={reward.id}>{reward.name}</li>
+            ))}
+          </ul>
+        </div> */}
+        <div className="text-center">
+          <div className="rotating-image-container">
             <img
-              src="https://via.placeholder.com/200"
-              alt="Achievement Illustration"
-              className="img-fluid"
+              src="/medal.png"
+              alt="Rotating Medal"
+              className="rotating-image"
             />
           </div>
         </div>
-
-        {/* Additional Content or Components can be added as needed */}
-
-        {/* Confetti Effect */}
-        {showConfetti && <Confetti />}
       </div>
-    </>
+      {showConfetti && <Confetti />}
+    </div>
   );
 }

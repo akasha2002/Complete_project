@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUserDetails } from "../Userdetails";
 import axios from 'axios';
 export default function Assigned_work() {
-    const { userType, userName } = useUserDetails();
+  const { userType, userName } = useUserDetails();
   // console.log(Username)
   const [recentAssignments, setRecentAssignments] = useState([]);
   const [finalId, setFinalId] = useState(null);
@@ -13,9 +13,16 @@ export default function Assigned_work() {
   // const handlesubmissionClick = () => {
   //     navigate('/student/Assignment_submission');
   // };
-  const handlesubmissionClick = (id) => {
+  const handlesubmissionClick = (id, status) => {
     // console.log(id)
-    navigate(`/student/Assignment_submission`,{ state: {id}});
+    //  navigate(`/student/Assignment_submission?id=${id}`);
+    console.log(status)
+    if (status == 'Work Assigned') {
+      navigate(`/student/Assignment_submission`, { state: { id } });
+    }
+    if (status == 'Work completed') {
+      navigate(`/student/Student_Completed_work`, { state: { id } });
+    }
   };
 
   useEffect(() => {
@@ -49,7 +56,9 @@ export default function Assigned_work() {
               teacher: row.teacher_name,
               subject: row.subjects,
               assignment: row.assignment_title,
+              status: row.assignment_status,
               dueDate: row.due_date,
+              assign_time: row.teacher_ass_post_time
             };
           });
           // Update state with data including auto-incrementing IDs
@@ -79,61 +88,26 @@ export default function Assigned_work() {
 
   return (
     <>
-      <div className="container-fluid px-4">
-        {/* <div className="row g-3 my-2">
-          <div className="col-md-3">
-            <div className="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
-              <div>
-                <h3 className="fs-2">{userName}</h3>
-                <p className="fs-5">Roll No</p>
-              </div>
-              <i className="fas fa-graduation-cap fs-1 primary-text border rounded-full secondary-bg p-3"></i>
-            </div>
-          </div>
-          <div className="col-md-3">
-            <div className="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
-              <div>
-                <h3 className="fs-2">{finalId}</h3>
-                <p className="fs-5">Assigned Work</p>
-              </div>
-              <i className="fas fa-id-card fs-1 primary-text border rounded-full secondary-bg p-3"></i>
-            </div>
-          </div>
-          <div className="col-md-3">
-            <div className="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
-              <div>
-                <h3 className="fs-2">{studentDetails.attendancePercentage}</h3>
-                <p className="fs-5">Completed Work</p>
-              </div>
-              <i className="fas fa-calendar-check fs-1 primary-text border rounded-full secondary-bg p-3"></i>
-            </div>
-          </div>
-          <div className="col-md-3">
-            <div className="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
-              <div>
-                <h3 className="fs-2">{studentDetails.name}</h3>
-                <p className="fs-5">Pending Work</p>
-              </div>
-              <i className="fas fa-user fs-1 primary-text border rounded-full secondary-bg p-3"></i>
-            </div>
-          </div>
-        </div> */}
+      <div className="container-fluid">
         <div className="row my-5">
-          <h3 className="fs-4 mb-3">Complete Assignments</h3>
+          <h3 className="fs-4 mb-3">Recent Assignments</h3>
           <div className="col">
-            <table className="table bg-white rounded shadow-sm table-hover">
-              <thead>
-                <tr>
-                  <th scope="col" width="50">
-                    #
-                  </th>
-                  <th scope="col">Subject</th>
-                  <th scope="col">Assignment</th>
-                  <th scope="col">Teacher</th>
-                  <th scope="col">Due Date</th>
-                </tr>
-              </thead>
-              {/* <tbody onClick={handlesubmissionClick(assignment.Auto_increment)}>
+            <div className="table-responsive">
+              <table className="table bg-white rounded shadow-sm table-hover" style={{'cursor': 'pointer'}}>
+                <thead>
+                  <tr>
+                    <th scope="col" width="50">
+                      #
+                    </th>
+                    <th scope="col">Subject</th>
+                    <th >Assignment</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Teacher</th>
+                    <th scope="col">Assigned Time</th>
+                    <th scope="col">Due Date</th>
+                  </tr>
+                </thead>
+                {/* <tbody onClick={handlesubmissionClick(assignment.Auto_increment)}>
                                 {recentAssignments.map((assignment) => (
                                     <tr key={assignment.id}>
                                         <th scope="row">{assignment.id}</th>
@@ -144,21 +118,24 @@ export default function Assigned_work() {
                                     </tr>
                                 ))}
                             </tbody> */}
-              <tbody>
-                {recentAssignments.map((assignment) => (
-                  <tr
-                    key={assignment.id}
-                    onClick={() => handlesubmissionClick(assignment.assign_id)}
-                  >
-                    <th scope="row">{assignment.id}</th>
-                    <td>{assignment.subject}</td>
-                    <td>{assignment.assignment}</td>
-                    <td>{assignment.teacher}</td>
-                    <td>{assignment.dueDate}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                <tbody>
+                  {recentAssignments.map((assignment) => (
+                    <tr
+                      key={assignment.id}
+                      onClick={() => handlesubmissionClick(assignment.assign_id, assignment.status)}
+                    >
+                      <th scope="row">{assignment.id}</th>
+                      <td>{assignment.subject}</td>
+                      <td>{assignment.assignment}</td>
+                      <td>{assignment.status}</td>
+                      <td>{assignment.teacher}</td>
+                      <td>{assignment.assign_time}</td>
+                      <td>{assignment.dueDate}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>

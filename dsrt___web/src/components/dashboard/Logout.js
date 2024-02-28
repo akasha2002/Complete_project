@@ -5,24 +5,7 @@ import { useAuth } from '../Logout/Authlogout';
 export default function Logout() {
 
     const { showLogoutModal, confirmLogout, cancelLogout } = useAuth();
-    // const [showLogoutModal, setShowLogoutModal] = useState(false);
-    // const navigate = useNavigate();
-
-    // const handleLogout = () => {
-    //     console.log('handleLogout');
-    //     setShowLogoutModal(true);
-    // };x
-
-    // const confirmLogout = () => {
-    //     console.log('confirmLogout');
-    //     setShowLogoutModal(false);
-    //     navigate('/');
-    // };
-
-    // const cancelLogout = () => {
-    //     console.log('cancelLogout');
-    //     setShowLogoutModal(false);
-    // };
+    
 
     return (
         <>

@@ -1,0 +1,49 @@
+/* styles.css */
+
+/* Rotate the image */
+.rotating-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 200px; /* Adjust size as needed */
+  height: 200px; /* Adjust size as needed */
+  margin: 0 auto; /* Center the container */
+  margin-bottom: 20px;
+}
+
+.rotating-image {
+  width: 100%; /* Adjust size to fill the container */
+  height: 100%; /* Adjust size to fill the container */
+  animation: rotateImage 5s linear infinite; /* Adjust animation duration and timing function as needed */
+}
+
+@keyframes rotateImage {
+  from {
+    transform: rotateY(0deg);
+  }
+  to {
+    transform: rotateY(360deg);
+  }
+}
+
+/* Bounce the card */
+.reward-page .card {
+  padding: 3vw; /* Adjust padding using viewport width */
+  max-width: 80%; /* Adjust max-width as needed */
+  width: auto; /* Adjust width to fill the container */
+  height: auto; /* Let the height adjust based on content */
+  margin: 0 auto;
+  animation: bounceIn 1s ease; /* Removed 'infinite' */
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0);
+  }
+  60% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

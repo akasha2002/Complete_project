@@ -1,0 +1,91 @@
+/* Combine styles from both CSS files */
+
+.crd {
+  flex-grow: 1;
+  /* Allow the card to grow and shrink */
+  margin-right: 10px;
+  /* Add margin between the cards */
+  height: 250px;
+  /* Set the initial height of the card */
+}
+
+.cbody {
+  display: flex;
+  padding: 20px;
+  height: 150%;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ctitle{
+  font-size: 2rem;
+  margin-bottom: 10px;
+  /* Add some space below the title */
+}
+
+.ctext {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  /* Add some space below the text */
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+  .crd {
+    height: 200px;
+    /* Reduce the height for smaller screens */
+  }
+}
+
+/* Media query for even smaller screens */
+@media (max-width: 576px) {
+  .crd {
+    height: 150px;
+    /* Further reduce the height for even smaller screens */
+  }
+}
+
+.dashboard {
+  justify-content: center;
+  /* Center the cards horizontally */
+}
+
+/* Adjusted height and margin for the card */
+.crd {
+  height: 140px;
+  /* Adjust the height of the card */
+  margin-right: 10px;
+  /* Add margin between the cards */
+}
+
+/* Specify margin for the last card to prevent it from having margin on the right side */
+.crd:last-child {
+  margin-right: 0;
+}
+
+/* Adjusted position for icons */
+.rollNumberIcon {
+  color: #fd7e14;
+  padding-left: 10px;
+  /* Change the icon color to blue */
+}
+
+.assignedWorkIcon {
+  color: #007bff;
+  padding-left: 10px;
+  /* Change the color to blue */
+}
+
+.incompleteWorkIcon {
+  color: #f10530fd;
+  padding-left: 10px;
+  /* Change the color to blue */
+}
+
+/* Style for the background of the page */
+.pageBackground {
+  background-color: #5e85cc;
+  height: 21vh;
+  /* Adjust the height to fill half of the page vertically */
+}

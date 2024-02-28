@@ -12,6 +12,8 @@ export const Authlogout = ({ children }) => {
   };
 
   const confirmLogout = () => {
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userType');
     console.log('confirmLogout');
     setShowLogoutModal(false);
     navigate('/');

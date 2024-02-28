@@ -1,102 +1,16 @@
-// import React from 'react'
-// import { useLocation } from 'react-router-dom';
-
-// export default function Student_Dashboard() {
-//     const { state: Username } = useLocation();
-//     // console.log(Username)
-
-//     const studentDetails = {
-//         name: 'John Doe',
-//         grade: '10',
-//         rollNumber: '12345',
-//         attendancePercentage: '90%',
-//     };
-
-//     const recentAssignments = [
-//         { id: 1, subject: 'Math', assignment: 'Chapter 5 Problems', dueDate: '2024-03-15' },
-//         { id: 2, subject: 'Science', assignment: 'Lab Report on Photosynthesis', dueDate: '2024-03-18' },
-//         { id: 3, subject: 'History', assignment: 'Research Paper on Ancient Civilizations', dueDate: '2024-03-20' },
-//     ];
-
-//     return (
-//         <>
-//             <div className="container-fluid px-4">
-//             <div className="row g-3 my-2">
-//                     <div className="col-md-3">
-//                         <div className="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
-//                             <div>
-//                                 <h3 className="fs-2">{studentDetails.grade}</h3>
-//                                 <p className="fs-5">Grade</p>
-//                             </div>
-//                             <i className="fas fa-graduation-cap fs-1 primary-text border rounded-full secondary-bg p-3"></i>
-//                         </div>
-//                     </div>
-//                     <div className="col-md-3">
-//                         <div className="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
-//                             <div>
-//                                 <h3 className="fs-2">{studentDetails.rollNumber}</h3>
-//                                 <p className="fs-5">Roll Number</p>
-//                             </div>
-//                             <i className="fas fa-id-card fs-1 primary-text border rounded-full secondary-bg p-3"></i>
-//                         </div>
-//                     </div>
-//                     <div className="col-md-3">
-//                         <div className="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
-//                             <div>
-//                                 <h3 className="fs-2">{studentDetails.attendancePercentage}</h3>
-//                                 <p className="fs-5">Attendance</p>
-//                             </div>
-//                             <i className="fas fa-calendar-check fs-1 primary-text border rounded-full secondary-bg p-3"></i>
-//                         </div>
-// //                     </div>
-//                     <div className="col-md-3">
-//                         <div className="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
-//                             <div>
-//                                 <h3 className="fs-2">{studentDetails.name}</h3>
-//                                 <p className="fs-5">Student Name</p>
-//                             </div>
-//                             <i className="fas fa-user fs-1 primary-text border rounded-full secondary-bg p-3"></i>
-//                         </div>
-//                     </div>
-//                 </div>
-//                 <div className="row my-5">
-//                 <h3 className="fs-4 mb-3">Recent Assignments</h3>
-//                     <div className="col">
-//                         <table className="table bg-white rounded shadow-sm table-hover">
-//                             <thead>
-//                                 <tr>
-//                                     <th scope="col" width="50">#</th>
-//                                     <th scope="col">Subject</th>
-//                                     <th scope="col">Assignment</th>
-//                                     <th scope="col">Due Date</th>
-//                                 </tr>
-//                             </thead>
-//                             <tbody>
-//                                 {recentAssignments.map((assignment) => (
-//                                     <tr key={assignment.id}>
-//                                         <th scope="row">{assignment.id}</th>
-//                                         <td>{assignment.subject}</td>
-//                                         <td>{assignment.assignment}</td>
-//                                         <td>{assignment.dueDate}</td>
-//                                     </tr>
-//                                 ))}
-//                             </tbody>
-//                         </table>
-//                     </div>
-//                 </div>
-//             </div>
-//         </>
-//     )
-// }
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserDetails } from "../Userdetails";
+import "./StudentDashboard.css"; // Import CSS module for styling
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTasks, faExclamationCircle, faUsersRectangle } from '@fortawesome/free-solid-svg-icons';
 
 export default function Student_Dashboard() {
   //const { state: Username } = useLocation();
   const { userType, userName } = useUserDetails();
   // console.log(Username)
   const [recentAssignments, setRecentAssignments] = useState([]);
+  const [staffAssignedData, setStaffAssignedData] = useState([]);
   const [finalId, setFinalId] = useState(null);
 
   const navigate = useNavigate();
@@ -104,15 +18,25 @@ export default function Student_Dashboard() {
   // const handlesubmissionClick = () => {
   //     navigate('/student/Assignment_submission');
   // };
-  const handlesubmissionClick = (id) => {
+  const handlesubmissionClick = (id, status) => {
     // console.log(id)
     //  navigate(`/student/Assignment_submission?id=${id}`);
-     navigate(`/student/Assignment_submission`,{ state: {id}});
+    // console.log(status)
+    if (status == 'Work Assigned') {
+      navigate(`/student/Assignment_submission`, { state: { id } });
+    }
+    // if(status =='Work completed'){
+    //   navigate(`/student/Student_Completed_work`,{ state: {id}});
+    // }
+
   };
+
+
 
   useEffect(() => {
     // Fetch data from the API with the username included in the request
     // console.log("Inside use effect",userName);
+
     if (userName) {
       fetch("http://localhost:3001/student/student_dashboard", {
         method: "POST",
@@ -141,7 +65,10 @@ export default function Student_Dashboard() {
               teacher: row.teacher_name,
               subject: row.subjects,
               assignment: row.assignment_title,
+              status: row.assignment_status,
               dueDate: row.due_date,
+              assign_time: row.teacher_ass_post_time,
+              // work_in_completed_count:row.work_in_completed_count
             };
           });
           // Update state with data including auto-incrementing IDs
@@ -155,6 +82,29 @@ export default function Student_Dashboard() {
       // console.log("Outside use effect",userName);
     }
   }, []);
+  // console.log(recentAssignments)
+
+  useEffect(() => {
+    if (userName) {
+      // fetch("http://192.168.1.2:3001/staff/assigned_work", {
+      fetch("http://localhost:3001/student/card", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          student_id: userName,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setStaffAssignedData(data.users);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+    }
+  }, [userName]);
 
   const studentDetails = {
     name: "John Doe",
@@ -168,92 +118,96 @@ export default function Student_Dashboard() {
   //     { id: 2, subject: 'Science', assignment: 'Lab Report on Photosynthesis', dueDate: '2024-03-18', teacher: 'Ms. Johnson' },
   //     { id: 3, subject: 'History', assignment: 'Research Paper on Ancient Civilizations', dueDate: '2024-03-20', teacher: 'Mr. Thompson' },
   // ];
+  // console.log(staffAssignedData)
 
   return (
-    <>
-      <div className="container-fluid px-4">
-        <div className="row g-3 my-2">
-          <div className="col-md-3">
-            <div className="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
+    <div className={`container-fluid px-4 pageBackground`}>
+      <div className={`row g-3 p-5 dashboard`}>
+        <div className="col-md-4">
+          <div className={`card crd`}>
+            <div className="card-body cbody">
               <div>
-                <h3 className="fs-2">{userName}</h3>
-                <p className="fs-5">Roll No</p>
+                <h3 className={`card-title ctitle`}>
+                  {userName}
+                </h3>
+                <p className={`card-text ctext`}>Student_ID</p>
               </div>
-              <i className="fas fa-graduation-cap fs-1 primary-text border rounded-full secondary-bg p-3"></i>
-            </div>
-          </div>
-          <div className="col-md-3">
-            <div className="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
               <div>
-                <h3 className="fs-2">{finalId}</h3>
-                <p className="fs-5">Assigned Work</p>
+                <FontAwesomeIcon icon={faUsersRectangle} className={`rollNumberIcon`} style={{ fontSize: '2.7rem' }} />
               </div>
-              <i className="fas fa-id-card fs-1 primary-text border rounded-full secondary-bg p-3"></i>
-            </div>
-          </div>
-          <div className="col-md-3">
-            <div className="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
-              <div>
-                <h3 className="fs-2">{studentDetails.attendancePercentage}</h3>
-                <p className="fs-5">Completed Work</p>
-              </div>
-              <i className="fas fa-calendar-check fs-1 primary-text border rounded-full secondary-bg p-3"></i>
-            </div>
-          </div>
-          <div className="col-md-3">
-            <div className="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
-              <div>
-                <h3 className="fs-2">{studentDetails.name}</h3>
-                <p className="fs-5">Pending Work</p>
-              </div>
-              <i className="fas fa-user fs-1 primary-text border rounded-full secondary-bg p-3"></i>
             </div>
           </div>
         </div>
-        <div className="row my-5">
-          <h3 className="fs-4 mb-3">Recent Assignments</h3>
-          <div className="col">
-            <table className="table bg-white rounded shadow-sm table-hover">
-              <thead>
-                <tr>
-                  <th scope="col" width="50">
-                    #
-                  </th>
-                  <th scope="col">Subject</th>
-                  <th scope="col">Assignment</th>
-                  <th scope="col">Teacher</th>
-                  <th scope="col">Due Date</th>
-                </tr>
-              </thead>
-              {/* <tbody onClick={handlesubmissionClick(assignment.Auto_increment)}>
-                                {recentAssignments.map((assignment) => (
-                                    <tr key={assignment.id}>
-                                        <th scope="row">{assignment.id}</th>
-                                        <td>{assignment.subject}</td>
-                                        <td>{assignment.assignment}</td>
-                                        <td>{assignment.teacher}</td>
-                                        <td>{assignment.dueDate}</td>
-                                    </tr>
-                                ))}
-                            </tbody> */}
-              <tbody>
-                {recentAssignments.map((assignment) => (
-                  <tr
-                    key={assignment.id}
-                    onClick={() => handlesubmissionClick(assignment.assign_id)}
-                  >
-                    <th scope="row">{assignment.id}</th>
-                    <td>{assignment.subject}</td>
-                    <td>{assignment.assignment}</td>
-                    <td>{assignment.teacher}</td>
-                    <td>{assignment.dueDate}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        <div className="col-md-4">
+          <div className={`card crd`}>
+            <div className="card-body cbody">
+              <div>
+                <h3 className={`card-title ctitle`}>{staffAssignedData.length > 0
+                  ? staffAssignedData[0].all_works
+                  : "Loading..."}</h3>
+                <p className={`card-text ctext`}>Assigned Work</p>
+              </div>
+              <div>
+                <FontAwesomeIcon icon={faTasks} className={`assignmentIcon assignedWorkIcon`} style={{ fontSize: '2.7rem' }} />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="col-md-4">
+          <div className={`card crd`}>
+            <div className="card-body cbody">
+              <div>
+                <h3 className={`card-title ctitle`}>{staffAssignedData.length > 0
+                  ? staffAssignedData[0].work_assigned_count
+                  : "Loading..."}</h3>
+                <p className={`card-text ctext`}>Pending Work</p>
+              </div>
+              <div>
+                <FontAwesomeIcon icon={faExclamationCircle} className={`pendingIcon incompleteWorkIcon`} style={{ fontSize: '2.9rem' }} />
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </>
+      <div className={`row my-5 recentAssignmentsBackground`}>
+        <h3 className="fs-4 mb-3">Recent Assignments</h3>
+        <div className="table-responsive">
+          <table className="table bg-white rounded shadow-sm table-hover" style={{'cursor': 'pointer'}}>
+            <thead>
+              <tr>
+                <th scope="col" width="50">#</th>
+                <th scope="col">Subject</th>
+                <th scope="col">Assignment</th>
+                <th scope="col">Status</th>
+                <th scope="col">Teacher</th>
+                <th scope="col">Assigned Time</th>
+                <th scope="col">Due Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {recentAssignments.map((assignment) => (
+                <tr
+                  key={assignment.id}
+                  onClick={() =>
+                    handlesubmissionClick(
+                      assignment.assign_id,
+                      assignment.status
+                    )
+                  }
+                >
+                  <th scope="row">{assignment.id}</th>
+                  <td>{assignment.subject}</td>
+                  <td>{assignment.assignment}</td>
+                  <td>{assignment.status}</td>
+                  <td>{assignment.teacher}</td>
+                  <td>{assignment.assign_time}</td>
+                  <td>{assignment.dueDate}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   );
 }

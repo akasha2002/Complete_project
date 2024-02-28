@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 const UserContext = createContext();
 
@@ -14,14 +14,24 @@ export const UserProvider = ({ children }) => {
   const [userName, setUserName] = useState('');
   const [userType, setUserType] = useState('');
 
+  // Load user details from storage when component mounts
+  useEffect(() => {
+    const storedUserName = localStorage.getItem('userName');
+    const storedUserType = localStorage.getItem('userType');
+    if (storedUserName && storedUserType) {
+      setUserName(storedUserName);
+      setUserType(storedUserType);
+    }
+  }, []);
+
   const setAndStoreUserName = (newUserName) => {
     setUserName(newUserName);
-    // You can add additional logic here to store the userName, like in localStorage or a state management system
+    localStorage.setItem('userName', newUserName);
   };
 
   const setAndStoreUserType = (newUserType) => {
     setUserType(newUserType);
-    // You can add additional logic here to store the userType, like in localStorage or a state management system
+    localStorage.setItem('userType', newUserType);
   };
 
   const value = {
@@ -35,6 +45,6 @@ export const UserProvider = ({ children }) => {
 };
 
 export const useUserDetails = () => {
-    const context = useUser();
-    return context;
-  };
+  const context = useUser();
+  return context;
+};
