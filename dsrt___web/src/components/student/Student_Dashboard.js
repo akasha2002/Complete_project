@@ -2,8 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserDetails } from "../Userdetails";
 import "./StudentDashboard.css"; // Import CSS module for styling
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTasks, faExclamationCircle, faUsersRectangle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faTasks,
+  faExclamationCircle,
+  faUsersRectangle,
+} from "@fortawesome/free-solid-svg-icons";
 
 export default function Student_Dashboard() {
   //const { state: Username } = useLocation();
@@ -22,16 +26,13 @@ export default function Student_Dashboard() {
     // console.log(id)
     //  navigate(`/student/Assignment_submission?id=${id}`);
     // console.log(status)
-    if (status == 'Work Assigned') {
+    if (status == "Work Assigned") {
       navigate(`/student/Assignment_submission`, { state: { id } });
     }
     // if(status =='Work completed'){
     //   navigate(`/student/Student_Completed_work`,{ state: {id}});
     // }
-
   };
-
-
 
   useEffect(() => {
     // Fetch data from the API with the username included in the request
@@ -127,13 +128,15 @@ export default function Student_Dashboard() {
           <div className={`card crd`}>
             <div className="card-body cbody">
               <div>
-                <h3 className={`card-title ctitle`}>
-                  {userName}
-                </h3>
+                <h3 className={`card-title ctitle`}>{userName}</h3>
                 <p className={`card-text ctext`}>Student_ID</p>
               </div>
               <div>
-                <FontAwesomeIcon icon={faUsersRectangle} className={`rollNumberIcon`} style={{ fontSize: '2.7rem' }} />
+                <FontAwesomeIcon
+                  icon={faUsersRectangle}
+                  className={`rollNumberIcon`}
+                  style={{ fontSize: "2.7rem" }}
+                />
               </div>
             </div>
           </div>
@@ -142,13 +145,19 @@ export default function Student_Dashboard() {
           <div className={`card crd`}>
             <div className="card-body cbody">
               <div>
-                <h3 className={`card-title ctitle`}>{staffAssignedData.length > 0
-                  ? staffAssignedData[0].all_works
-                  : "Loading..."}</h3>
+                <h3 className={`card-title ctitle`}>
+                  {staffAssignedData.length > 0
+                    ? staffAssignedData[0].all_works
+                    : "Loading..."}
+                </h3>
                 <p className={`card-text ctext`}>Assigned Work</p>
               </div>
               <div>
-                <FontAwesomeIcon icon={faTasks} className={`assignmentIcon assignedWorkIcon`} style={{ fontSize: '2.7rem' }} />
+                <FontAwesomeIcon
+                  icon={faTasks}
+                  className={`assignmentIcon assignedWorkIcon`}
+                  style={{ fontSize: "2.7rem" }}
+                />
               </div>
             </div>
           </div>
@@ -157,13 +166,19 @@ export default function Student_Dashboard() {
           <div className={`card crd`}>
             <div className="card-body cbody">
               <div>
-                <h3 className={`card-title ctitle`}>{staffAssignedData.length > 0
-                  ? staffAssignedData[0].work_assigned_count
-                  : "Loading..."}</h3>
+                <h3 className={`card-title ctitle`}>
+                  {staffAssignedData.length > 0
+                    ? staffAssignedData[0].work_assigned_count
+                    : "Loading..."}
+                </h3>
                 <p className={`card-text ctext`}>Pending Work</p>
               </div>
               <div>
-                <FontAwesomeIcon icon={faExclamationCircle} className={`pendingIcon incompleteWorkIcon`} style={{ fontSize: '2.9rem' }} />
+                <FontAwesomeIcon
+                  icon={faExclamationCircle}
+                  className={`pendingIcon incompleteWorkIcon`}
+                  style={{ fontSize: "2.9rem" }}
+                />
               </div>
             </div>
           </div>
@@ -172,10 +187,15 @@ export default function Student_Dashboard() {
       <div className={`row my-5 recentAssignmentsBackground`}>
         <h3 className="fs-4 mb-3">Recent Assignments</h3>
         <div className="table-responsive">
-          <table className="table bg-white rounded shadow-sm table-hover" style={{'cursor': 'pointer'}}>
+          <table
+            className="table bg-white rounded shadow-sm table-hover"
+            style={{ cursor: "pointer" }}
+          >
             <thead>
               <tr>
-                <th scope="col" width="50">#</th>
+                <th scope="col" width="50">
+                  #
+                </th>
                 <th scope="col">Subject</th>
                 <th scope="col">Assignment</th>
                 <th scope="col">Status</th>
@@ -185,25 +205,29 @@ export default function Student_Dashboard() {
               </tr>
             </thead>
             <tbody>
-              {recentAssignments.map((assignment) => (
-                <tr
-                  key={assignment.id}
-                  onClick={() =>
-                    handlesubmissionClick(
-                      assignment.assign_id,
-                      assignment.status
-                    )
-                  }
-                >
-                  <th scope="row">{assignment.id}</th>
-                  <td>{assignment.subject}</td>
-                  <td>{assignment.assignment}</td>
-                  <td>{assignment.status}</td>
-                  <td>{assignment.teacher}</td>
-                  <td>{assignment.assign_time}</td>
-                  <td>{assignment.dueDate}</td>
-                </tr>
-              ))}
+              {recentAssignments.slice(0, 5).map(
+                (
+                  assignment // Use slice(0, 5) to limit to first 5 elements
+                ) => (
+                  <tr
+                    key={assignment.id}
+                    onClick={() =>
+                      handlesubmissionClick(
+                        assignment.assign_id,
+                        assignment.status
+                      )
+                    }
+                  >
+                    <th scope="row">{assignment.id}</th>
+                    <td>{assignment.subject}</td>
+                    <td>{assignment.assignment}</td>
+                    <td>{assignment.status}</td>
+                    <td>{assignment.teacher}</td>
+                    <td>{assignment.assign_time}</td>
+                    <td>{assignment.dueDate}</td>
+                  </tr>
+                )
+              )}
             </tbody>
           </table>
         </div>

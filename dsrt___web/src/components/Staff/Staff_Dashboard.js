@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useUserDetails } from "../Userdetails";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ReactPaginate from "react-paginate";
 import {
   faTasks,
   faExclamationCircle,
@@ -17,6 +18,8 @@ export default function Staff_Dashboard() {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [workStatusData, setWorkStatusData] = useState([]);
   const [dashboard_details_card, setdashboard_details_card] = useState([]);
+  const [offset, setOffset] = useState(0); // Pagination offset
+  const [perPage] = useState(5); // Number of items per page
 
   useEffect(() => {
     const fetchData = async () => {
@@ -115,7 +118,11 @@ export default function Staff_Dashboard() {
   const standards = [
     ...new Set(studentData.map((student) => student.Student_standard)),
   ];
-
+  // Handle page change
+  const handlePageClick = (data) => {
+    const selectedPage = data.selected;
+    setOffset(selectedPage * perPage);
+  };
   return (
     <div className="container-fluid px-4 pageBackground">
       <div className={`row g-3 p-5 dashboard`}>
@@ -123,9 +130,7 @@ export default function Staff_Dashboard() {
           <div className={`card crd`}>
             <div className="card-body cbody">
               <div>
-                <h3 className={`card-title ctitle`}>
-                  {userName}
-                </h3>
+                <h3 className={`card-title ctitle`}>{userName}</h3>
                 <p className={`card-text ctext`}>Staff_id</p>
               </div>
               <div>
@@ -164,7 +169,9 @@ export default function Staff_Dashboard() {
             <div className="card-body cbody">
               <div>
                 <h3 className={`card-title ctitle`}>
-                  {dashboard_details_card.length > 0 ? dashboard_details_card[0].student_count : 'Loading...'}
+                  {dashboard_details_card.length > 0
+                    ? dashboard_details_card[0].student_count
+                    : "Loading..."}
                 </h3>
                 <p className={`card-text ctext`}>Class Handling</p>
               </div>
@@ -179,6 +186,27 @@ export default function Staff_Dashboard() {
           </div>
         </div>
       </div>
+      {/* Filters */}
+      {/* Pagination */}
+      <ReactPaginate
+        previousLabel={"Previous"}
+        nextLabel={"Next"}
+        breakLabel={"..."}
+        breakClassName={"page-item"}
+        breakLinkClassName={"page-link"}
+        pageCount={Math.ceil(filteredStudents.length / perPage)}
+        marginPagesDisplayed={2}
+        pageRangeDisplayed={5}
+        onPageChange={handlePageClick}
+        containerClassName={"pagination"}
+        activeClassName={"active"}
+        pageClassName={"page-item"}
+        pageLinkClassName={"page-link"}
+        previousClassName={"page-item"}
+        previousLinkClassName={"page-link"}
+        nextClassName={"page-item"}
+        nextLinkClassName={"page-link"}
+      />
 
       <div className="dropdown mb-3">
         <button
@@ -205,8 +233,9 @@ export default function Staff_Dashboard() {
       <div className="btn-group mb-3" role="group" aria-label="Basic example">
         <button
           type="button"
-          className={`btn ${selectedStandard === "All" ? "btn-primary" : "btn-secondary"
-            }`}
+          className={`btn ${
+            selectedStandard === "All" ? "btn-primary" : "btn-secondary"
+          }`}
           onClick={() => setSelectedStandard("All")}
         >
           All Standards
@@ -215,8 +244,9 @@ export default function Staff_Dashboard() {
           <button
             key={index}
             type="button"
-            className={`btn ${selectedStandard === standard ? "btn-primary" : "btn-secondary"
-              }`}
+            className={`btn ${
+              selectedStandard === standard ? "btn-primary" : "btn-secondary"
+            }`}
             onClick={() => setSelectedStandard(standard)}
           >
             {standard}
@@ -236,34 +266,59 @@ export default function Staff_Dashboard() {
           className="btn btn-primary"
           type="button"
           onClick={() => setSearchKeyword("")}
-          style={{"z-index": "0"}}
         >
           Clear
         </button>
       </div>
 
       <div className="table-responsive">
-        <table className="table bg-white rounded shadow-sm table-hover" style={{'cursor': 'pointer'}}>
+        <table
+          className="table bg-white rounded shadow-sm table-hover"
+          style={{ cursor: "pointer" }}
+        >
           <thead className="bg-primary text-white">
             <tr>
-              <th>Student ID</th>
+              <th>#</th> {/* Auto-incrementing column */}
               <th>Student Name</th>
               <th>Standard</th>
+              <th>Section</th>
               <th>Category</th>
               <th>Work Status</th>
             </tr>
           </thead>
           <tbody>
-            {filteredStudents.map((student, index) => (
-              <tr key={index}>
-                <td>{student.student_id}</td>
-                <td>{student.student_name}</td>
-                <td>{student.Student_standard}</td>
-                <td>{student.category}</td>
-                <td>{getWorkStatus(student.student_id)}</td>
-              </tr>
-            ))}
+            {filteredStudents
+              .slice(offset, offset + perPage)
+              .map((student, index) => (
+                <tr key={offset + index + 1}>
+                  {" "}
+                  {/* Adjust key to start from 1 */}
+                  <td style={{ fontWeight: "bold" }}>
+                    {offset + index + 1}
+                  </td>{" "}
+                  {/* Adjust index calculation */}
+                  <td>{student.student_name}</td>
+                  <td>{student.Student_standard}</td>
+                  <td>{student.Student_Section}</td>
+
+
+                  <td>{student.category}</td>
+                  <td>{getWorkStatus(student.student_id)}</td>
+                </tr>
+              ))}
           </tbody>
+
+          {/* <tbody>
+      {filteredStudents.map((student, index) => (
+        <tr key={index}>
+          <td style={{ fontWeight: 'bold' }}>{index + 1}</td>
+          <td>{student.student_name}</td>
+          <td>{student.Student_standard}</td>
+          <td>{student.category}</td>
+          <td>{getWorkStatus(student.student_id)}</td>
+        </tr>
+      ))}
+    </tbody> */}
         </table>
       </div>
     </div>

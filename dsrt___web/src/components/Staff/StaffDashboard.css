@@ -1,14 +1,4 @@
 /* Combine styles from both CSS files */
-
-.crd {
-  flex-grow: 1;
-  /* Allow the card to grow and shrink */
-  margin-right: 10px;
-  /* Add margin between the cards */
-  height: 250px;
-  /* Set the initial height of the card */
-}
-
 .cbody {
   display: flex;
   padding: 20px;
@@ -18,7 +8,7 @@
   align-items: center;
 }
 
-.ctitle{
+.ctitle {
   font-size: 25px;
   margin-bottom: 10px;
   /* Add some space below the title */
@@ -28,22 +18,6 @@
   font-size: 15px;
   margin-bottom: 10px;
   /* Add some space below the text */
-}
-
-/* Media query for smaller screens */
-@media (max-width: 768px) {
-  .crd {
-    height: 100px;
-    /* Reduce the height for smaller screens */
-  }
-}
-
-/* Media query for even smaller screens */
-@media (max-width: 576px) {
-  .crd {
-    height: 150px;
-    /* Further reduce the height for even smaller screens */
-  }
 }
 
 .dashboard {
@@ -57,6 +31,17 @@
   /* Adjust the height of the card */
   margin-right: 10px;
   /* Add margin between the cards */
+}
+
+@media (max-width: 330px) {
+  .crd {
+    width: 14rem;
+    margin-right: 0; /* Remove the margin between the cards */
+  }
+  .dashboard {
+    padding-left: 8px !important;
+    /* Center the cards horizontally */
+  }
 }
 
 /* Specify margin for the last card to prevent it from having margin on the right side */

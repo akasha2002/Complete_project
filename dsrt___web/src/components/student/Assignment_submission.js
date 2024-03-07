@@ -3,7 +3,6 @@ import axios from "axios";
 import { useLocation } from "react-router-dom";
 import { useUserDetails } from "../Userdetails";
 import { Link, useNavigate } from 'react-router-dom';
-import "./assignement_submission.css";
 
 export default function Assignment_submission(props) {
   // console.log(props.id)
@@ -225,7 +224,7 @@ export default function Assignment_submission(props) {
 
           <div className="button-container">            
             <button
-            className="btn btn-primary btn-animated custom-button"
+            className="btn btn-primary btn-animated"
               onClick={() =>
                 window.open(
                   `http://localhost:3001/get-pdf/${assignments_view.assign_pdf}`,
@@ -262,7 +261,7 @@ export default function Assignment_submission(props) {
       {/* Modal */}
       {showConfirmationModal && (
         <div className="modal" tabIndex="-1" role="dialog" style={{ display: 'block' }}>
-          <div className="modal-dialog" role="document">
+          <div className="modal-dialog modal-dialog-centered" role="document">
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Confirmation</h5>

@@ -9,6 +9,9 @@ export default function Work_view() {
   const classs = location.state?.classs;
   const category = location.state?.category;
   const title = location.state?.title;
+  const section = location.state?.section;
+  const teacher_ass_post_time = location.state?.teacher_ass_post_time;
+
   const navigate = useNavigate();
 
   const [workData, setWorkData] = useState([]);
@@ -28,6 +31,8 @@ export default function Work_view() {
             classs: classs,
             category: category,
             title: title,
+            section:section,
+            teacher_ass_post_time:teacher_ass_post_time
           }),
         });
         const data = await response.json();
@@ -75,6 +80,7 @@ export default function Work_view() {
             title: assignment.assignment_title,
             teacher_id: userName,
             rewards: assignment.rewards,
+            teacher_submit_time:teacher_ass_post_time
           }));
 
         const response = await fetch(
@@ -126,8 +132,9 @@ export default function Work_view() {
             <table className="table table-bordered">
               <thead className="bg-primary text-white">
                 <tr>
+                  <th>#</th>
                   <th>Assignment Title</th>
-                  <th>Student Id</th>
+                  {/* <th>Student Id</th> */}
                   <th>Student Name</th>
                   <th>Assignment Status</th>
                   <th>Student Submit Time</th>
@@ -140,8 +147,10 @@ export default function Work_view() {
               <tbody>
                 {filteredWorkData.map((assignment, index) => (
                   <tr key={index}>
+                    <td style={{ fontWeight: "bold" }}>{index + 1}</td>{" "}
+                    {/* Auto-incrementing column */}
                     <td>{assignment.assignment_title}</td>
-                    <td>{assignment.student_id}</td>
+                    {/* <td>{assignment.student_id}</td> */}
                     <td>{assignment.student_name}</td>
                     <td>{assignment.assignment_status}</td>
                     <td>{assignment.student_submit_time}</td>
@@ -153,7 +162,7 @@ export default function Work_view() {
                           className="btn btn-success"
                           onClick={() =>
                             window.open(
-                              `http://localhost:3001/get-pdf/${assignment.assignment_pdf_student}`,
+                              `http://192.168.252.146:3001/get-pdf/${assignment.assignment_pdf_student}`,
                               "_blank"
                             )
                           }
@@ -208,7 +217,7 @@ export default function Work_view() {
                 </button>
               </div>
               <div className="modal-body">
-                <p>Are you sure you want to submit reards  </p>
+                <p>Are you sure you want to submit reards </p>
               </div>
               <div className="modal-footer">
                 <button

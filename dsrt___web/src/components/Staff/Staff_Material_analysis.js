@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useUserDetails } from "../Userdetails";
 import { useNavigate } from "react-router-dom";
+import ReactPaginate from "react-paginate";
 
-export default function Staff_Assigned_Work() {
+export default function Staff_Material_analysis() {
   const { userName } = useUserDetails();
   const [staffAssignedData, setStaffAssignedData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedStandard, setSelectedStandard] = useState("All");
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [offset, setOffset] = useState(0); // Pagination offset
+  const [perPage] = useState(10); // Number of items per page
   const navigate = useNavigate();
 
   useEffect(() => {
     if (userName) {
-      // fetch("http://192.168.1.2:3001/staff/assigned_work", {
-      fetch("http://localhost:3001/staff/assigned_work", {
+      fetch("http://localhost:3001/staff/staff_material_analysis", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -32,10 +34,11 @@ export default function Staff_Assigned_Work() {
     }
   }, [userName]);
 
-  const handleSubmissionClick = (classs, category, title,section,teacher_ass_post_time) => {
+  const handleSubmissionClick = (classs, category, material_title,section,teacher_ass_material_time) => {
+    // console.log(material_title)
     if (classs) {
-      navigate(`/Staff/Staff_work_view`, {
-        state: { classs, category, title ,section,teacher_ass_post_time},
+      navigate(`/Staff/Staff_Material_status`, {
+        state: { classs, category, material_title,section,teacher_ass_material_time },
       });
     }
   };
@@ -61,9 +64,36 @@ export default function Staff_Assigned_Work() {
     ...new Set(staffAssignedData.map((student) => student.class)),
   ];
 
+  // Handle page change
+  const handlePageClick = (data) => {
+    const selectedPage = data.selected;
+    setOffset(selectedPage * perPage);
+  };
+
   return (
     <div className="container-fluid">
       <div className="row my-5">
+        {/* Filters */}
+        {/* Pagination */}
+        <ReactPaginate
+          previousLabel={"Previous"}
+          nextLabel={"Next"}
+          breakLabel={"..."}
+          breakClassName={"page-item"}
+          breakLinkClassName={"page-link"}
+          pageCount={Math.ceil(filteredData.length / perPage)}
+          marginPagesDisplayed={2}
+          pageRangeDisplayed={5}
+          onPageChange={handlePageClick}
+          containerClassName={"pagination"}
+          activeClassName={"active"}
+          pageClassName={"page-item"}
+          pageLinkClassName={"page-link"}
+          previousClassName={"page-item"}
+          previousLinkClassName={"page-link"}
+          nextClassName={"page-item"}
+          nextLinkClassName={"page-link"}
+        />
         <div className="col">
           <div className="dropdown mb-3">
             <button
@@ -141,43 +171,43 @@ export default function Staff_Assigned_Work() {
             >
               <thead className="bg-primary text-white">
                 <tr>
-                  <th>#</th> {/* Auto-incrementing column */}
+                  <th>#</th>
                   <th>Assignment Title</th>
                   <th>Class</th>
                   <th>Section</th>
+
                   <th>Category</th>
-                  <th>Work Assigned Count</th>
-                  <th>Work Completed Count</th>
-                  <th>Mark Given Count</th>
+                  <th>Total Student Count</th>
+                  <th>Student Unopened Count</th>
+
                 </tr>
               </thead>
               <tbody>
-                {filteredData.map((assignment, index) => (
+                {filteredData.slice(offset, offset + perPage).map((assignment, index) => (
                   <tr
                     key={index}
                     onClick={() =>
                       handleSubmissionClick(
                         assignment.class,
                         assignment.category,
-                        assignment.assignment_title,
+                        assignment.material_title,
                         assignment.section,
-                        assignment.teacher_ass_post_time
+                        assignment.teacher_ass_material_time
                       )
                     }
                   >
-                    <td style={{ fontWeight: "bold" }}>{index + 1}</td>{" "}
-                    {/* Auto-incrementing value */}
-                    <td scope="row">{assignment.assignment_title}</td>
-                    {/* <td scope="row">{assignment.a_Auto_increment}</td> */}
-
+                    <td style={{ fontWeight: "bold" }}>{offset + index + 1}</td>{" "}
+                    {/* Auto-incrementing column */}
+                    <td scope="row">{assignment.material_title}</td>
                     <td>{assignment.class}</td>
-                    {/* <td>{assignment.teacher_ass_post_time}</td> */}
-
                     <td>{assignment.section}</td>
+                    {/* <td>{assignment.teacher_ass_material_time}</td> */}
+
+
                     <td>{assignment.category}</td>
-                    <td>{assignment.work_assigned_count}</td>
-                    <td>{assignment.work_completed_count}</td>
-                    <td>{assignment.mark_completed_count}</td>
+                    <td>{assignment.total_student_count}</td>
+                    <td>{assignment.total_completed_count}</td>
+
                   </tr>
                 ))}
               </tbody>

@@ -31,9 +31,12 @@
   background-color: #ededed;
 }
 
-.main-content{
+.main-content {
   height: 100vh;
+  position: relative; /* Change position to relative */
+  z-index: 0 !important;
 }
+
 
 .navbar {
   background-color: #5e85cc;
@@ -50,7 +53,7 @@
   -o-transition: margin 0.25s ease-out;
   transition: margin 0.25s ease-out;
   position: fixed;
-  z-index: 2;
+  z-index: 2 !important;
   top: 0;
   left: 0;
   height: 100%;
@@ -136,7 +139,7 @@
     width: 0; /* Set initial width to 0 to hide the sidebar */
     height: 100%;
     margin-left: 0;
-    z-index: 1000;
+    z-index: 2;
     transition: width 0.25s ease-out;
   }
 

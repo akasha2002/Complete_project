@@ -10,6 +10,12 @@ export default function Completed_work_view() {
   const classs = location.state?.classs;
   const category = location.state?.category;
   const title = location.state?.title;
+  const section = location.state?.section;
+  const teacher_ass_post_time = location.state?.teacher_ass_post_time;
+
+
+  // console.log(section)
+
 
   const navigate = useNavigate();
 
@@ -102,6 +108,8 @@ export default function Completed_work_view() {
               classs: classs,
               category: category,
               title: title,
+              section:section,
+              teacher_ass_post_time:teacher_ass_post_time
             }),
           }
         );
@@ -131,6 +139,7 @@ export default function Completed_work_view() {
         <table className="table table-bordered">
           <thead className="bg-primary text-white">
             <tr>
+              <th>#</th>
               <th>Assignment Title</th>
               <th>Student Name</th>
               <th>Student Submit Time</th>
@@ -143,6 +152,8 @@ export default function Completed_work_view() {
           <tbody>
             {filteredWorkData.map((assignment, index) => (
               <tr key={index} className={index % 2 === 0 ? "bg-light" : ""}>
+                <td style={{ fontWeight: "bold" }}>{index + 1}</td>{" "}
+                {/* Auto-incrementing column */}
                 <td>{assignment.assignment_title}</td>
                 <td>{assignment.student_name}</td>
                 <td>{assignment.student_submit_time}</td>

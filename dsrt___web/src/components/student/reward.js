@@ -61,7 +61,7 @@ export default function Reward() {
   }, []);
 
   return (
-    <div className="container-fluid mt-4 reward-page">
+    <div className="container-fluid pt-4 reward-page">
       <div className="card p-4" ref={cardRef}>
         <h2 className="mb-4">Rewards</h2>
         <div className="mb-4">
@@ -86,7 +86,8 @@ export default function Reward() {
           </div>
         </div>
       </div>
-      {showConfetti && <Confetti />}
+     
+      {showConfetti && <Confetti style={{ width: "100%" }} />}
     </div>
   );
 }

@@ -32,10 +32,11 @@ const Sidebar = forwardRef((props, ref) => {
             <div className={`bg-white`} id="sidebar-wrapper" ref={ref}>
                 <div className="sidebar-heading text-center py-4 primary-text fs-4 fw-bold text-uppercase border-bottom">
                     <img
-                        src="https://www.fxschool.ac.in/cs-content/themes/fxcbse/assets/img/FX_LOGO.png"
+                        // src="https://www.fxschool.ac.in/cs-content/themes/fxcbse/assets/img/FX_LOGO.png"
+                        src={process.env.PUBLIC_URL + '/fx.jpg'}
                         alt="FX School Logo"
                         className="me-2"
-                        style={{ width: '180px', height: '50px' }} // Adjust the width and height as needed
+                        style={{ width: '190px', height: '50px' }}
                     />
                 </div>
                 <div className="list-group list-group-flush">
@@ -52,6 +53,12 @@ const Sidebar = forwardRef((props, ref) => {
                                 className={`list-group-item list-group-item-action bg-transparent second-text fw-bold ${activeLink === 'Student_Assigned_work' || activeLink === 'Assignment_submission' ? 'active' : ''}`}
                             >
                                 <i className="fas fa-tasks me-2"></i>Assigned work
+                            </Link>
+                            <Link
+                                to="/student/Student_Assigned_material"
+                                className={`list-group-item list-group-item-action bg-transparent second-text fw-bold ${activeLink === 'Student_Assigned_material' || activeLink === 'Assignment_submission' ? 'active' : ''}`}
+                            >
+                                <i className="fas fa-book me-2"></i>Assigned Material
                             </Link>
                             <Link
                                 to="/student/Student_Completed_work"
@@ -80,6 +87,18 @@ const Sidebar = forwardRef((props, ref) => {
                                 className={`list-group-item list-group-item-action bg-transparent second-text fw-bold ${activeLink === 'Staff_Assign_Work' ? 'active' : ''}`}
                             >
                                 <i className="fas fa-tasks me-2"></i>Assign Work
+                            </Link>
+                            <Link
+                                to="/Staff/Staff_Assign_material"
+                                className={`list-group-item list-group-item-action bg-transparent second-text fw-bold ${activeLink === 'Staff_Assign_material' ? 'active' : ''}`}
+                            >
+                                <i className="fas fa-tasks me-2"></i>Assign Material
+                            </Link>
+                            <Link
+                                to="/Staff/Staff_Material_analysis"
+                                className={`list-group-item list-group-item-action bg-transparent second-text fw-bold ${activeLink === 'Staff_Material_analysis' || activeLink === 'Staff_Material_status' ? 'active' : ''}`}
+                            >
+                                <i className="fas fa-tasks me-2"></i>Material Analysis
                             </Link>
                             <Link
                                 to="/Staff/Staff_Assigned_Work"

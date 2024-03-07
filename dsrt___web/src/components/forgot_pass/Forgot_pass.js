@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -55,6 +56,17 @@ const ForgotPassword = () => {
           <div className="mb-3">
             <button className="btn btn-primary w-100" style={{ backgroundColor: '#0082c8' }} onClick={handleVerifyEmailAndChangePassword}>Verify Email and Change Password</button>
           </div>
+          <Link to="/">
+            <div className="d-grid">
+              <button
+                type="submit"
+                className="btn btn-primary"
+                style={{ backgroundColor: "#0082c8" }}
+              >
+                Login
+              </button>
+            </div>
+          </Link>
           {message && <div className="alert alert-info">{message}</div>}
         </div>
       </div>
